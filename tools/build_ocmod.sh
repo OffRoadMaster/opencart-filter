@@ -6,5 +6,5 @@ root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 cd "$root"
 rm -f "$package"
-zip -qr "$package" install.json README.md admin catalog ocmod
+zip -qr "$package" install.json README.md admin catalog
 printf 'Created %s\n' "$package"
