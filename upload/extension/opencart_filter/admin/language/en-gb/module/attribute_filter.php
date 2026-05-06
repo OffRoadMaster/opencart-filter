@@ -1,0 +1,20 @@
+<?php
+$_['heading_title'] = 'AJAX Attribute Filter';
+$_['text_extension'] = 'Extensions';
+$_['text_success'] = 'Success: You have modified AJAX Attribute Filter settings!';
+$_['text_edit'] = 'Edit AJAX Attribute Filter';
+$_['text_rebuild_success'] = 'Success: Attribute filter index has been rebuilt!';
+$_['text_all_attributes'] = 'All attributes';
+$_['entry_status'] = 'Status';
+$_['entry_name'] = 'Module name';
+$_['entry_attribute'] = 'Filter attributes';
+$_['entry_auto_index'] = 'Automatic indexing';
+$_['entry_show_counts'] = 'Show product counts';
+$_['entry_limit'] = 'AJAX product limit';
+$_['button_rebuild'] = 'Rebuild index now';
+$_['help_attribute'] = 'Leave empty to show every indexed attribute.';
+$_['help_auto_index'] = 'Registers OpenCart events and rebuilds the index after product, category, or attribute changes.';
+$_['help_limit'] = 'Maximum products returned by the AJAX endpoint.';
+$_['error_permission'] = 'Warning: You do not have permission to modify AJAX Attribute Filter!';
+$_['error_name'] = 'Module name must be between 3 and 64 characters!';
+$_['error_limit'] = 'Product limit must be greater than 0!';
