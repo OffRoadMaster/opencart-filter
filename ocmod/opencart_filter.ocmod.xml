@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+  <name>OpenCart Filter namespace fallback</name>
+  <code>opencart_filter_namespace_fallback</code>
+  <version>1.0.0</version>
+  <author>OpenCart Filter</author>
+  <link>https://example.com/opencart-filter</link>
+  <file path="admin/controller/startup/extension.php">
+    <operation>
+      <search><![CDATA[$this->config->addPath('extension/ocmod', DIR_EXTENSION . 'ocmod/system/config/');]]></search>
+      <add position="after"><![CDATA[
+
+		// OpenCart Filter: make the module edit route available even when the marketplace install cache was not rebuilt yet.
+		if (is_dir(DIR_EXTENSION . 'opencart_filter/')) {
+			$this->autoloader->register('Opencart\Admin\Controller\Extension\OpencartFilter', DIR_EXTENSION . 'opencart_filter/admin/controller/');
+			$this->autoloader->register('Opencart\Admin\Model\Extension\OpencartFilter', DIR_EXTENSION . 'opencart_filter/admin/model/');
+			$this->autoloader->register('Opencart\System\Library\Extension\OpencartFilter', DIR_EXTENSION . 'opencart_filter/system/library/');
+			$this->template->addPath('extension/opencart_filter', DIR_EXTENSION . 'opencart_filter/admin/view/template/');
+			$this->language->addPath('extension/opencart_filter', DIR_EXTENSION . 'opencart_filter/admin/language/');
+			$this->config->addPath('extension/opencart_filter', DIR_EXTENSION . 'opencart_filter/system/config/');
+		}
+]]></add>
+    </operation>
+  </file>
+  <file path="catalog/controller/startup/extension.php">
+    <operation>
+      <search><![CDATA[$this->config->addPath('extension/ocmod', DIR_EXTENSION . 'ocmod/system/config/');]]></search>
+      <add position="after"><![CDATA[
+
+		// OpenCart Filter: make storefront AJAX routes available even when the marketplace install cache was not rebuilt yet.
+		if (is_dir(DIR_EXTENSION . 'opencart_filter/')) {
+			$this->autoloader->register('Opencart\Catalog\Controller\Extension\OpencartFilter', DIR_EXTENSION . 'opencart_filter/catalog/controller/');
+			$this->autoloader->register('Opencart\Catalog\Model\Extension\OpencartFilter', DIR_EXTENSION . 'opencart_filter/catalog/model/');
+			$this->autoloader->register('Opencart\System\Library\Extension\OpencartFilter', DIR_EXTENSION . 'opencart_filter/system/library/');
+			$this->template->addPath('extension/opencart_filter', DIR_EXTENSION . 'opencart_filter/catalog/view/template/');
+			$this->language->addPath('extension/opencart_filter', DIR_EXTENSION . 'opencart_filter/catalog/language/');
+			$this->config->addPath('extension/opencart_filter', DIR_EXTENSION . 'opencart_filter/system/config/');
+		}
+]]></add>
+    </operation>
+  </file>
+</modification>
