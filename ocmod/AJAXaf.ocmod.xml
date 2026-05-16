@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+  <name>OpenCart Filter namespace fallback</name>
+  <code>ajaxaf_namespace_fallback</code>
+  <version>1.0.0</version>
+  <author>OpenCart Filter</author>
+  <link>https://example.com/opencart-filter</link>
+  <file path="admin/controller/startup/extension.php">
+    <operation>
+      <search><![CDATA[$this->config->addPath('extension/ocmod', DIR_EXTENSION . 'ocmod/system/config/');]]></search>
+      <add position="after"><![CDATA[
+
+		// OpenCart Filter: make the module edit route available even when the marketplace install cache was not rebuilt yet.
+		if (is_dir(DIR_EXTENSION . 'AJAXaf/')) {
+			$this->autoloader->register('Opencart\Admin\Controller\Extension\AJAXaf', DIR_EXTENSION . 'AJAXaf/admin/controller/');
+			$this->autoloader->register('Opencart\Admin\Model\Extension\AJAXaf', DIR_EXTENSION . 'AJAXaf/admin/model/');
+			$this->autoloader->register('Opencart\System\Library\Extension\AJAXaf', DIR_EXTENSION . 'AJAXaf/system/library/');
+			$this->template->addPath('extension/AJAXaf', DIR_EXTENSION . 'AJAXaf/admin/view/template/');
+			$this->language->addPath('extension/AJAXaf', DIR_EXTENSION . 'AJAXaf/admin/language/');
+			$this->config->addPath('extension/AJAXaf', DIR_EXTENSION . 'AJAXaf/system/config/');
+		}
+]]></add>
+    </operation>
+  </file>
+  <file path="catalog/controller/startup/extension.php">
+    <operation>
+      <search><![CDATA[$this->config->addPath('extension/ocmod', DIR_EXTENSION . 'ocmod/system/config/');]]></search>
+      <add position="after"><![CDATA[
+
+		// OpenCart Filter: make storefront AJAX routes available even when the marketplace install cache was not rebuilt yet.
+		if (is_dir(DIR_EXTENSION . 'AJAXaf/')) {
+			$this->autoloader->register('Opencart\Catalog\Controller\Extension\AJAXaf', DIR_EXTENSION . 'AJAXaf/catalog/controller/');
+			$this->autoloader->register('Opencart\Catalog\Model\Extension\AJAXaf', DIR_EXTENSION . 'AJAXaf/catalog/model/');
+			$this->autoloader->register('Opencart\System\Library\Extension\AJAXaf', DIR_EXTENSION . 'AJAXaf/system/library/');
+			$this->template->addPath('extension/AJAXaf', DIR_EXTENSION . 'AJAXaf/catalog/view/template/');
+			$this->language->addPath('extension/AJAXaf', DIR_EXTENSION . 'AJAXaf/catalog/language/');
+			$this->config->addPath('extension/AJAXaf', DIR_EXTENSION . 'AJAXaf/system/config/');
+		}
+]]></add>
+    </operation>
+  </file>
+</modification>

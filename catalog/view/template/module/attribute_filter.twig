@@ -1,0 +1,83 @@
+<div class="card mb-3 ocf-attribute-filter" data-ajax-url="{{ ajax_url }}" data-category-id="{{ category_id }}" data-limit="{{ limit }}">
+  <div class="card-header"><strong>{{ heading_title }}</strong></div>
+  <div class="card-body">
+    {% for group in groups %}
+      <div class="mb-3">
+        <label class="form-label fw-bold" for="ocf-{{ group.attribute_id }}">{{ group.name }}</label>
+        <select class="form-select ocf-attribute-filter__input" id="ocf-{{ group.attribute_id }}" name="attribute_filter[{{ group.attribute_id }}]">
+          <option value="">{{ text_select }}</option>
+          {% for value in group.values %}
+            <option value="{{ value.value_hash }}">
+              {{ value.text }}{% if show_counts %} ({{ value.product_count }}){% endif %}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="card-footer">
+    <button type="button" class="btn btn-sm btn-light ocf-attribute-filter__clear">{{ text_clear }}</button>
+    <span class="small text-muted ms-2 ocf-attribute-filter__total"></span>
+  </div>
+</div>
+<div class="row ocf-attribute-filter__results d-none"></div>
+<script>
+(function () {
+  const script = document.currentScript;
+  const results = script.previousElementSibling;
+  const filter = results ? results.previousElementSibling : null;
+  const productList = document.getElementById('product-list') || results;
+
+  if (!filter || !productList) {
+    return;
+  }
+
+  const inputs = Array.from(filter.querySelectorAll('.ocf-attribute-filter__input'));
+  const total = filter.querySelector('.ocf-attribute-filter__total');
+  const clear = filter.querySelector('.ocf-attribute-filter__clear');
+  let controller = null;
+
+  function buildUrl() {
+    const url = new URL(filter.dataset.ajaxUrl.replace(/&amp;/g, '&'), window.location.origin);
+    url.searchParams.set('category_id', filter.dataset.categoryId || '0');
+    url.searchParams.set('limit', filter.dataset.limit);
+
+    inputs.filter((input) => input.value).forEach((input) => {
+      url.searchParams.append(input.name, input.value);
+    });
+
+    return url;
+  }
+
+  function refreshProducts() {
+    if (controller) {
+      controller.abort();
+    }
+
+    controller = new AbortController();
+    filter.classList.add('opacity-75');
+
+    fetch(buildUrl(), { signal: controller.signal, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then((response) => response.json())
+      .then((json) => {
+        productList.innerHTML = json.products;
+        productList.classList.remove('d-none');
+        total.textContent = json.text_total || '';
+      })
+      .catch((error) => {
+        if (error.name !== 'AbortError') {
+          console.error(error);
+        }
+      })
+      .finally(() => {
+        filter.classList.remove('opacity-75');
+      });
+  }
+
+  inputs.forEach((input) => input.addEventListener('change', refreshProducts));
+  clear.addEventListener('click', function () {
+    inputs.forEach((input) => { input.value = ''; });
+    refreshProducts();
+  });
+})();
+</script>
