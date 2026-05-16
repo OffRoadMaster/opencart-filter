@@ -1,0 +1,105 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="float-end">
+        <button type="submit" form="form-attribute-filter" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-save"></i></button>
+        <button type="button" id="button-rebuild-index" data-bs-toggle="tooltip" title="{{ button_rebuild }}" class="btn btn-info"><i class="fa-solid fa-rotate"></i></button>
+        <a href="{{ back }}" data-bs-toggle="tooltip" title="{{ button_back }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div id="alert-area"></div>
+    {% if error_warning %}
+      <div class="alert alert-danger"><i class="fa-solid fa-circle-exclamation"></i> {{ error_warning }}</div>
+    {% endif %}
+    <div class="card">
+      <div class="card-header"><i class="fa-solid fa-pencil"></i> {{ text_edit }}</div>
+      <div class="card-body">
+        <form id="form-attribute-filter" action="{{ save }}" method="post" data-oc-toggle="ajax">
+          <input type="hidden" name="module_id" value="{{ module_id }}"/>
+          <div class="row mb-3 required">
+            <label for="input-name" class="col-sm-2 col-form-label">{{ entry_name }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control"/>
+              {% if error_name %}<div class="text-danger">{{ error_name }}</div>{% endif %}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">{{ entry_attribute }}</label>
+            <div class="col-sm-10">
+              <div class="form-text mb-2">{{ help_attribute }}</div>
+              {% if attributes %}
+                <select name="attribute_ids[]" class="form-select" multiple size="12">
+                  {% for attribute in attributes %}
+                    <option value="{{ attribute.attribute_id }}" {% if attribute.attribute_id in attribute_ids %}selected{% endif %}>{{ attribute.attribute_group }} &raquo; {{ attribute.name }}</option>
+                  {% endfor %}
+                </select>
+              {% else %}
+                <div class="text-muted">{{ text_all_attributes }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="input-limit" class="col-sm-2 col-form-label">{{ entry_limit }}</label>
+            <div class="col-sm-10">
+              <input type="number" min="1" name="limit" value="{{ limit }}" id="input-limit" class="form-control"/>
+              <div class="form-text">{{ help_limit }}</div>
+              {% if error_limit %}<div class="text-danger">{{ error_limit }}</div>{% endif %}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="input-auto-index" class="col-sm-2 col-form-label">{{ entry_auto_index }}</label>
+            <div class="col-sm-10">
+              <select name="auto_index" id="input-auto-index" class="form-select">
+                <option value="1" {% if auto_index %}selected{% endif %}>{{ text_enabled }}</option>
+                <option value="0" {% if not auto_index %}selected{% endif %}>{{ text_disabled }}</option>
+              </select>
+              <div class="form-text">{{ help_auto_index }}</div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="input-show-counts" class="col-sm-2 col-form-label">{{ entry_show_counts }}</label>
+            <div class="col-sm-10">
+              <select name="show_counts" id="input-show-counts" class="form-select">
+                <option value="1" {% if show_counts %}selected{% endif %}>{{ text_enabled }}</option>
+                <option value="0" {% if not show_counts %}selected{% endif %}>{{ text_disabled }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="input-status" class="col-sm-2 col-form-label">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="status" id="input-status" class="form-select">
+                <option value="1" {% if status %}selected{% endif %}>{{ text_enabled }}</option>
+                <option value="0" {% if not status %}selected{% endif %}>{{ text_disabled }}</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.getElementById('button-rebuild-index').addEventListener('click', function () {
+  const button = this;
+  button.disabled = true;
+  fetch('{{ rebuild|e('js') }}')
+    .then((response) => response.json())
+    .then((json) => {
+      const type = json.error ? 'danger' : 'success';
+      const message = json.error || json.success;
+      document.getElementById('alert-area').innerHTML = '<div class="alert alert-' + type + '"><i class="fa-solid fa-circle-info"></i> ' + message + '</div>';
+    })
+    .finally(() => { button.disabled = false; });
+});
+</script>
+{{ footer }}
